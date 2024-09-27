@@ -38,5 +38,12 @@ idCarro INT(10) NOT NULL,
 PRIMARY KEY (id),
 FOREIGN KEY (idCarro) REFERENCES tbCarros(id)
 );
+
+ALTER TABLE tbProprietario ADD idade INT(3) NOT NULL;
+
+ALTER TABLE tbProprietario DROP COLUMN idade;
+
+SELECT * FROM tbProprietario
+
 -- DELETAR A BASE
 -- DROP DATABASE bd_carro;
