@@ -7,7 +7,8 @@ WHERE id IN (SELECT id_autor FROM livros
 SELECT id, nome FROM membros 
 WHERE id IN (SELECT id_membro FROM emprestimos GROUP BY id_membro HAVING COUNT(id_membro) > 1);
 
-SELECT id, titulo FROM livros 
+SELECT id, t
+itulo FROM livros 
 WHERE id IN (SELECT id_livro FROM emprestimos);
 
 SELECT id, titulo FROM livros 
