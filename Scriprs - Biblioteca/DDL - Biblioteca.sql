@@ -36,3 +36,5 @@ PRIMARY KEY(id),
 FOREIGN KEY (id_membro) REFERENCES membros(id),
 FOREIGN KEY (id_livro) REFERENCES livros(id)
 );
+
+ALTER TABLE emprestimos MODIFY COLUMN data_devolucao DATETIME NULL;

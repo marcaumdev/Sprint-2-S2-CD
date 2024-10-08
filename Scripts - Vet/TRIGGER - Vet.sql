@@ -1,0 +1,1 @@
+-- Exercício 1. Crie um trigger que, sempre que um novo pet for inserido na tabela, calcule automaticamente a idade do pet com base em sua data de nascimento e armazene esse valor na coluna idade.

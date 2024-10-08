@@ -6,6 +6,9 @@ INSERT INTO autores(nome, data_nascimento) VALUES
 ('Marcos','2004/09/04'),
 ('Gustavo','2005/08/15'),
 ('Bill','1998/05/07');
+
+INSERT INTO autores(nome, data_nascimento) VALUES
+('Michael','2010/05/07');
 SELECT * FROM autores;
 
 INSERT INTO livros(titulo, ano_publicado, id_autor) VALUES
@@ -33,3 +36,8 @@ INSERT INTO emprestimos(id_membro, id_livro, data_emprestimo, data_devolucao) VA
 ('1','1','2013/04/13','2016/04/13'),
 ('1','4','2008/04/13','2024/07/18'),
 ('1','2','2010/04/13','2021/04/13');
+
+INSERT INTO emprestimos(id_membro, id_livro, data_emprestimo) VALUES
+('4','5','2024-10-07');
+
+SELECT * FROM emprestimos;
