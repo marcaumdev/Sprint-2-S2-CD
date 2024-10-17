@@ -6,15 +6,16 @@ app = Flask('carros')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:senai%40134@127.0.0.1/bdcarro'
 
-mybd = SQLAlchemy() # Você precisa inicializar o SQLAlchemy
+mybd = SQLAlchemy(app) # Você precisa inicializar o SQLAlchemy
 
 class Carros(mybd.Model):
+    __tablename__ = "tbcarros"
     id = mybd.Column(mybd.Integer, primary_key=True)  # Corrigi de Interger para Integer
     marca = mybd.Column(mybd.String(100))
     modelo = mybd.Column(mybd.String(100))
     valor = mybd.Column(mybd.Float)
     cor = mybd.Column(mybd.String(100))
-    numero_vendas = mybd.Column(mybd.Float)
+    numeroVendas = mybd.Column(mybd.Float)
     ano = mybd.Column(mybd.String(4))
 
     def to_json(self):
@@ -25,13 +26,16 @@ class Carros(mybd.Model):
             "modelo": self.modelo,
             "valor": self.valor,
             "cor": self.cor,
-            "numero_vendas": self.numero_vendas,
+            "numeroVendas": self.numeroVendas,
             "ano": self.ano
         }
 
 @app.route("/carros/<id>", methods=["GET"])
 def seleciona_carro_id(id):
     carro_objetos = Carros.query.filter_by(id=id).first()
+
+    if(carro_objetos == None):
+        return gera_response(404, "carros", {}, "Carro não encontrado!")
 
     carro_json = carro_objetos.to_json()
 
@@ -56,7 +60,7 @@ def criar_carro():
             modelo = body["modelo"],
             valor = body["valor"],
             cor = body["cor"],
-            numero_vendas = body["numero_vendas"],
+            numeroVendas = body["numeroVendas"],
             ano = body["ano"],
         )
 
@@ -74,7 +78,10 @@ def criar_carro():
 def atualizar_carro(id):
     carro_objeto = Carros.query.filter_by(id=id).first()
 
-    body = request.get_json
+    if(carro_objeto == None):
+        return gera_response(404, "carros", {}, "Carro não encontrado!")
+
+    body = request.get_json()
 
     try:
         if('marca' in body):
@@ -86,9 +93,34 @@ def atualizar_carro(id):
         if('cor' in body):
             carro_objeto.cor = body["cor"]
         if('numero_vendas' in body):
-            carro_objeto.numero_vendas = body["numero_vendas"]
+            carro_objeto.numeroVendas = body["numeroVendas"]
         if('ano' in body):
             carro_objeto.ano = body["ano"]
+        
+        mybd.session.add(carro_objeto)
+        mybd.session.commit()
+
+        return gera_response(200, "carros", carro_objeto.to_json(), "Atualizado com sucesso!")
+    except Exception as e:
+        print('Erro', e)
+        return gera_response(400, "carros", {}, "Erro ao atualizar")
+
+@app.route("/carros/<id>", methods=["DELETE"])
+def deletar_carro(id):
+    carro_objeto = Carros.query.filter_by(id=id).first()
+
+    if(carro_objeto == None):
+        return gera_response(404, "carros", {}, "Carro não encontrado!")
+
+    try:
+        mybd.session.delete(carro_objeto)
+        mybd.session.commit()
+
+        return gera_response(200, "carros", {}, "Deletado com sucesso!")
+    except Exception as e:
+        print('Erro', e)
+        return gera_response(400, "carros", {}, "Erro ao deletar")
+
 
 def gera_response(status, nome_conteudo, conteudo, mensagem=False):
     body = {}
@@ -99,5 +131,4 @@ def gera_response(status, nome_conteudo, conteudo, mensagem=False):
 
     return Response(json.dumps(body), status=status, mimetype="application/json")
 
-def init_app(app):
-    mybd.init_app(app)
+app.run(port=5500, host='localhost', debug=True)
